@@ -4,11 +4,11 @@ public class BankOfMoney {
 	public static void main(String[] args) {
 
 		String account1Name = "Khalid";
-		double account1Balance = 1000000000;
+		double account1Balance = 180000;
 		String account2Name = "Anas";
-		double account2Balance = 15.00;
+		double account2Balance = 130000.00;
 		String account3Name = "Abdulaziz";
-		double account3Balance = 8.00;
+		double account3Balance = 150000.00;
 		double bankProfit = 0.0;
 		Scanner scanner = new Scanner(System.in);
 		while (true) {
