@@ -79,7 +79,7 @@ public class BankOfMoney {
 				continue;
 			}
 			double totalDeposited = 0, totalWithdrawn = 0;
-			while () {
+			while (true) {
 				System.out.println("\nAccount Operations for " + accountName);
 				System.out.println("1. View Balance");
 				System.out.println("2. Deposit Money");
