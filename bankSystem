@@ -1,1 +1,124 @@
+import java.util.*;
+
+import ATM.CarRental;
+
+public class ATMAccount {
+	static Account account1 = new Account(1, "Khalid", 1000);
+	static Account account2 = new Account(2, "Anas", 1467);
+	static Account account3 = new Account(3, "Abdulaziz", 2000);
+	static Account[] accounts = { account1, account2, account3 };
+
+	public static void main(String[] args) {
+
+		Scanner input = new Scanner(System.in);
+		boolean exitSystem = false;
+		while (!exitSystem) {
+
+			System.out.println("Welcome To Our Bank");
+			System.out.println("1.Khalid (101)");
+			System.out.println("2.Anas (102)");
+			System.out.println("3.Abdulaziz(103)");
+			System.out.println("4.Administrator");
+			System.out.println("5.exit");
+			System.out.println("select an option:");
+			int choice = input.nextInt();
+			switch (choice) {
+			case 1:
+			case 2:
+			case 3:
+				operationsforaccount(accounts[choice - 1]);
+				break;
+			case 4:
+				Adminstration();
+				break;
+			case 5:
+				exitSystem = true;
+				System.out.println("Thank you for using our bank, Good bey");
+				break;
+
+			default:
+				System.out.println("Invalid option : please try again.");
+				break;
+			}// Switch
+		} // while1
+		input.close();
+	}// main
+
+	private static void operationsforaccount(Account account) {
+		Scanner input = new Scanner(System.in);
+		boolean exitSystem = false;
+		while (!exitSystem) {
+			System.out.println("\nAccount Operations menu :");
+			System.out.println("1. View Balance");
+			System.out.println("2. Deposit Money");
+			System.out.println("3. Withdraw Money");
+			System.out.println("4. Transfer Money");
+			System.out.println("5. Return to The menu ");
+
+			int choice = input.nextInt();
+			switch (choice) {
+			case 1:
+				account.displayBalance();
+				break;
+			case 2:
+				System.out.println("Enter The Amount to deposit");
+				double depositAmount = input.nextDouble();
+				if (account.deposit(depositAmount)) {
+					System.out.println("Deposit successfully");
+				} else
+					System.out.println("Deposit Failed");
+				
+				break;
+			case 3:
+				System.out.println("Enter The Amount To Withdraw: ");
+				double WithdrawAmount = input.nextDouble();
+				if (account.withdraw(WithdrawAmount)) {
+					System.out.println("Withdraw successfully");
+				} else
+					System.out.println("You Don't have enough money");
+				break;
+			case 4:
+				System.out.println("Enter The Account You Want To Send The Money :(1 or 2,3)");
+				System.out.println("1.Khalid (101)");
+				System.out.println("2.Anas (102)");
+				System.out.println("3.Abdulaziz(103)");
+				int AccountTransfer = input.nextInt();
+				System.out.println("Enter The Amount ");
+				double TransferAmount = input.nextDouble();
+				if (AccountTransfer >= 1 && AccountTransfer <= 3) {
+					if (account.transfer(accounts[AccountTransfer - 1], TransferAmount)) {
+						System.out.println("Transfer successfully");
+
+					} else {
+						System.out.println("Transfer Faild !");
+					}
+				} else {
+					System.out.println("Wrong account !!");
+				}
+
+				break;
+			case 5:
+				System.out.println("Transaction Summary:");
+				System.out.println("Total Deposited: " + Account.TotalDeposits);
+				System.out.println("Total Withdrawn: " + Account.TotalWithdraws);
+				System.out.println("Total Transfer: " + Account.TotalTransfers);
+				exitSystem = true;
+
+				break;
+
+			default:
+				System.out.println("Invalid option : please try again.");
+				break;
+			}// Switch
+		}
+
+	}
+
+	private static void Adminstration() {
+		System.out.println("Administrator Menu:");
+		System.out.println("The Profit : " + Account.totalCharges);
+		Account.displayStatistics();
+
+	}
+}
 
