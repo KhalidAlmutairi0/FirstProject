@@ -1,124 +1,204 @@
-import java.util.*;
 
-import ATM.CarRental;
+public class Account {
+	private int number = 0;
+	private String name;
+	private double balance = 0.0;
+	private static int numViewBalance = 0;
+	private static int numDeposits = 0;
+	private static int numWithdraws = 0;
+	private static int numTransfers = 0;
+	private static double totalInAccount = 0.0;
+	private static double totalOutAccount = 0.0;
+	// space
+	public static double totalCharges = 0;
+	public static double TotalViewBalance = 0;
+	public static double TotalDeposits = 0;
+	public static double TotalWithdraws = 0;
+	public static double TotalTransfers = 0;
 
-public class ATMAccount {
-	static Account account1 = new Account(1, "Khalid", 1000);
-	static Account account2 = new Account(2, "Anas", 1467);
-	static Account account3 = new Account(3, "Abdulaziz", 2000);
-	static Account[] accounts = { account1, account2, account3 };
+	public Account(int number, String name, double balance) {
+		this.name = name;
+		this.number = number;
+		this.balance = balance;
+		Account.numDeposits = 0;
+		Account.numTransfers = 0;
+		Account.numViewBalance = 0;
+		Account.numWithdraws = 0;
+		Account.totalInAccount = 0;
+		Account.totalOutAccount = 0;
+	}
 
-	public static void main(String[] args) {
+	private boolean isAvaliable(double amount) {
+		return balance > amount;
+	}
 
-		Scanner input = new Scanner(System.in);
-		boolean exitSystem = false;
-		while (!exitSystem) {
-
-			System.out.println("Welcome To Our Bank");
-			System.out.println("1.Khalid (101)");
-			System.out.println("2.Anas (102)");
-			System.out.println("3.Abdulaziz(103)");
-			System.out.println("4.Administrator");
-			System.out.println("5.exit");
-			System.out.println("select an option:");
-			int choice = input.nextInt();
-			switch (choice) {
-			case 1:
-			case 2:
-			case 3:
-				operationsforaccount(accounts[choice - 1]);
-				break;
-			case 4:
-				Adminstration();
-				break;
-			case 5:
-				exitSystem = true;
-				System.out.println("Thank you for using our bank, Good bey");
-				break;
-
-			default:
-				System.out.println("Invalid option : please try again.");
-				break;
-			}// Switch
-		} // while1
-		input.close();
-	}// main
-
-	private static void operationsforaccount(Account account) {
-		Scanner input = new Scanner(System.in);
-		boolean exitSystem = false;
-		while (!exitSystem) {
-			System.out.println("\nAccount Operations menu :");
-			System.out.println("1. View Balance");
-			System.out.println("2. Deposit Money");
-			System.out.println("3. Withdraw Money");
-			System.out.println("4. Transfer Money");
-			System.out.println("5. Return to The menu ");
-
-			int choice = input.nextInt();
-			switch (choice) {
-			case 1:
-				account.displayBalance();
-				break;
-			case 2:
-				System.out.println("Enter The Amount to deposit");
-				double depositAmount = input.nextDouble();
-				if (account.deposit(depositAmount)) {
-					System.out.println("Deposit successfully");
-				} else
-					System.out.println("Deposit Failed");
-				
-				break;
-			case 3:
-				System.out.println("Enter The Amount To Withdraw: ");
-				double WithdrawAmount = input.nextDouble();
-				if (account.withdraw(WithdrawAmount)) {
-					System.out.println("Withdraw successfully");
-				} else
-					System.out.println("You Don't have enough money");
-				break;
-			case 4:
-				System.out.println("Enter The Account You Want To Send The Money :(1 or 2,3)");
-				System.out.println("1.Khalid (101)");
-				System.out.println("2.Anas (102)");
-				System.out.println("3.Abdulaziz(103)");
-				int AccountTransfer = input.nextInt();
-				System.out.println("Enter The Amount ");
-				double TransferAmount = input.nextDouble();
-				if (AccountTransfer >= 1 && AccountTransfer <= 3) {
-					if (account.transfer(accounts[AccountTransfer - 1], TransferAmount)) {
-						System.out.println("Transfer successfully");
-
-					} else {
-						System.out.println("Transfer Faild !");
-					}
-				} else {
-					System.out.println("Wrong account !!");
-				}
-
-				break;
-			case 5:
-				System.out.println("Transaction Summary:");
-				System.out.println("Total Deposited: " + Account.TotalDeposits);
-				System.out.println("Total Withdrawn: " + Account.TotalWithdraws);
-				System.out.println("Total Transfer: " + Account.TotalTransfers);
-				exitSystem = true;
-
-				break;
-
-			default:
-				System.out.println("Invalid option : please try again.");
-				break;
-			}// Switch
+	public boolean deposit(double amount) {
+		if (amount > 0) {
+			balance += amount;
+			numDeposits++;
+			TotalDeposits += amount;
+			totalInAccount +=amount;
+			return true;
+		} else {
+			return false;
 		}
 
 	}
 
-	private static void Adminstration() {
-		System.out.println("Administrator Menu:");
-		System.out.println("The Profit : " + Account.totalCharges);
-		Account.displayStatistics();
+	public boolean withdraw(double amount) {
+		double fees = amount * 0.01;
+		if (isAvaliable(amount + fees)) {
+			balance -= (amount + fees);
+			numWithdraws++;
+			TotalWithdraws+= amount;
+			totalOutAccount +=(amount + fees);
+			totalCharges += fees;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean transfer(Account obj, double amount) {
+		double charge = amount * 0.025;
+		if (this.number == obj.number && this.name.equalsIgnoreCase(obj.name)) {
+			System.out.println("You Can't Transfer The Money To Yourself");
+			return false;
+		}
+
+		else {
+
+			if (isAvaliable(amount + charge) && !obj.name.equals(null)) {
+				balance -= (amount + charge);
+				obj.balance += amount;
+				totalOutAccount+=(amount + charge);
+				numTransfers++;
+				TotalTransfers += amount;
+				totalCharges += charge;
+				return true;
+
+			} else
+				return false;
+
+		}
+	}
+
+	public void displayBalance() {
+		System.out.println("Account name = " + name);
+		System.out.println("Balance : " + balance);
+		numViewBalance++;
+		TotalViewBalance++;
+	}
+
+	static public void displayStatistics() {
+		System.out.println("This Is The Number of Deposits = " + numDeposits);
+		System.out.println("This Is The Number of Withdraws = " + numWithdraws);
+		System.out.println("This Is The Number of Transfers = " + numTransfers);
+		System.out.println("The total money in : " + Account.totalInAccount);
+		System.out.println("The total money out : " + Account.totalOutAccount);
+
+		if (numDeposits == numWithdraws & numDeposits == numTransfers & numTransfers == numWithdraws) {
+			System.out.println(" all operations are equal");
+		} else if (numDeposits >= numWithdraws & numDeposits >= numTransfers) {
+			if (numDeposits == numWithdraws)
+				System.out.println("withdrawals and deposits are most used operations");
+			else if (numDeposits == numTransfers)
+				System.out.println("Transfers and deposits are most used operations");
+			else
+				System.out.println("deposits is most used operation");
+		} else if (numWithdraws >= numDeposits & numWithdraws >= numTransfers) {
+			if (numWithdraws == numDeposits)
+				System.out.println("withdrawals and deposits are most used operations");
+			else if (numWithdraws == numTransfers)
+				System.out.println("withdrawals and Transfers are most used operations");
+			else
+				System.out.println("withdrawals is most used operation");
+		} else {
+			if (numTransfers == numDeposits)
+				System.out.println(" deposits and Transfers are most used operations");
+			else if (numTransfers == numWithdraws)
+				System.out.println("withdrawals and Transfers are most used operations");
+			else
+				System.out.println("Transfers is most used operation");
+		}
+	}
+
+ 	public void reset() {
+		numDeposits = 0;
+		numTransfers = 0;
+		numWithdraws = 0;
+		numViewBalance = 0;
+		totalInAccount = 0;
+		totalOutAccount = 0;
 
 	}
-}
 
+	public int getNumber() {
+		return number;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public double getBalance() {
+		return balance;
+	}
+
+	public int getNumViewBalance() {
+		return numViewBalance;
+	}
+
+	public int getNumDeposits() {
+		return numDeposits;
+	}
+
+	public int getNumWithdraws() {
+		return numWithdraws;
+	}
+
+	public int getNumTransfers() {
+		return numTransfers;
+	}
+
+	public double getTotalInAccount() {
+		return totalInAccount;
+	}
+
+	public double getTotalOutAccount() {
+		return totalOutAccount;
+	}
+
+	public double getTotalCharges() {
+		return totalCharges;
+	}
+
+	public double getTotalViewBalance() {
+		return TotalViewBalance;
+	}
+
+	public double getTotalDeposits() {
+		return TotalDeposits;
+	}
+
+	public double getTotalWithdraws() {
+		return TotalWithdraws;
+	}
+
+	public double getTotalTransfers() {
+		return TotalTransfers;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+
+}
